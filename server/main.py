@@ -3,11 +3,11 @@ import string
 from functools import wraps
 
 from sanic import Sanic
-from sanic.response import json, text
+from sanic.response import json, redirect
 from aiopg.sa import create_engine
 import sqlalchemy as sa
-from sqlalchemy.sql import and_
-
+from passlib.hash import bcrypt
+import psycopg2.errors
 
 database_name = 'test'
 database_host = 'database'
@@ -24,11 +24,12 @@ users = sa.Table('users', metadata,
                  sa.Column('user_id', sa.Integer, primary_key=True),
                  sa.Column('username', sa.String(255),
                            nullable=False, unique=True),
-                 sa.Column('password', sa.String(255), nullable=False))
+                 sa.Column('password', sa.String(255), nullable=False),
+                 sa.Column("permission", sa.ARRAY(sa.String(50))))
 
 tb_session = sa.Table('tb_session', metadata,
-                   sa.Column('session_id', sa.String(255)),
-                   sa.Column('user_id', sa.Integer, nullable=False, unique=True))
+                      sa.Column('session_id', sa.String(255)),
+                      sa.Column('user_id', sa.Integer, nullable=False, unique=True))
 
 app = Sanic(name=__name__)
 
@@ -39,17 +40,16 @@ def generate_session_id():
 
 async def check_request_for_authorization_status(request):
     session = request.cookies.get('session')
-    flag = False
-    async with create_engine(connection) as engine:
-        async with engine.acquire() as conn:
-            result = conn.execute(users.select().where(tb_session.c.session_id == session).limit(1))
-            async for r in result:
-                user_id = r.user_id
-                print("id", user_id)
-                if user_id:
-                    request["user_id"] = user_id
-                    print("req id", request.get("user_id"))
-                    flag = True
+    if session:
+        flag = False
+        async with create_engine(connection) as engine:
+            async with engine.acquire() as conn:
+                result = conn.execute(users.select().where(tb_session.c.session_id == session).limit(1))
+                async for r in result:
+                    user_id = r.user_id
+                    if user_id:
+                        request["user_id"] = user_id
+                        flag = True
     return flag
 
 
@@ -63,7 +63,8 @@ def authorized():
                 response = await f(request, *args, **kwargs)
                 return response
             else:
-                return json({'Status': 'Not_authorized'}, 403)
+                response = json({'Status': 'Not_authorized'}, 403)
+                return response.redirect('/sign_in')
         return decorated_function
     return decorator
 
@@ -76,7 +77,8 @@ async def prepare_db(app, loop):
             await conn.execute('''CREATE TABLE users (
                                 user_id serial PRIMARY KEY,
                                 username varchar(255) NOT NULL UNIQUE, 
-                                password varchar(255) NOT NULL)''')
+                                password varchar(255) NOT NULL,
+                                permission TEXT [])''')
             await conn.execute('DROP TABLE IF EXISTS tb_session')
             await conn.execute('''CREATE TABLE tb_session (
                                             session_id varchar(255),
@@ -92,8 +94,19 @@ async def sign_up(request):
         return json("Bad Request. Passwords don't match", 400)
     async with create_engine(connection) as engine:
         async with engine.acquire() as conn:
-            await conn.execute(users.insert().values(username=username, password=password))
-            return json("Ok", 200)
+            try:
+                result = await conn.execute(users.insert().values(username=username,
+                                                                  password=bcrypt.hash(password),
+                                                                  permission=["view"]))
+                async for r in result:
+                    user_id = r.user_id
+                    if user_id:
+                        if user_id == 1:
+                            await conn.execute(
+                                users.update().where(users.c.user_id == user_id).values(permission=["admin"]))
+                    return json("Ok", 200)
+            except psycopg2.Error as e:
+                return json(e.pgerror, 400)
 
 
 @app.route('/sign_in', methods=["POST"])
@@ -102,17 +115,16 @@ async def sign_in(request):
     password = request.form.get('password')
     async with create_engine(connection) as engine:
         async with engine.acquire() as conn:
-            result = conn.execute(users.select().where(and_(
-                users.c.username == username,
-                users.c.password == password)).limit(1))
+            result = conn.execute(users.select().where(users.c.username == username).limit(1))
             async for r in result:
-                user_id = r.user_id
-                if user_id:
-                    session_id = generate_session_id()
-                    await conn.execute(tb_session.insert().values(session_id=session_id, user_id=user_id))
-                    response = text("Ok")
-                    response.cookies['session'] = session_id
-                    return response
+                if bcrypt.verify(password, r.password):
+                    user_id = r.user_id
+                    if user_id:
+                        session_id = generate_session_id()
+                        await conn.execute(tb_session.insert().values(session_id=session_id, user_id=user_id))
+                        response = json("Ok", 200)
+                        response.cookies['session'] = session_id
+                        return response
             return json("Bad Request", 400)
 
 
@@ -121,7 +133,6 @@ async def sign_in(request):
 async def sign_out(request):
     async with create_engine(connection) as engine:
         async with engine.acquire() as conn:
-            print(request.get("user_id"))
             await conn.execute(tb_session.delete().where(tb_session.c.user_id == request.get("user_id")))
             return json("Ok", 200)
 
@@ -134,15 +145,18 @@ async def reset_password(request):
     new_password = request.form.get('new_password')
     new_password_repeat = request.form.get('new_password_repeat')
     if new_password != new_password_repeat:
-        return json("passwords don't match")
+        return json("Bad Request. New passwords don't match", 400)
     async with create_engine(connection) as engine:
         async with engine.acquire() as conn:
-            result = await conn.execute(users.update().where(and_(
-                users.c.username == username,
-                users.c.password == old_password)
-            ).values(password=new_password))
-            if result.rowcount:
-                return json("Ok", 200)
+            result = conn.execute(users.select().where(users.c.username == username).limit(1))
+            async for r in result:
+                if bcrypt.verify(old_password, r.password):
+                    user_id = r.user_id
+                    if user_id:
+                        result = await conn.execute(users.update().where(users.c.username == username).values(
+                            password=bcrypt.hash(new_password)))
+                        if result.rowcount:
+                            return json("Ok", 200)
             return json("Bad Request", 400)
 
 
