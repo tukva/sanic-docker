@@ -10,8 +10,6 @@ services:
 
     database:
         image: postgres:11.5
-        ports:
-            - 5432:5432
         environment:
             POSTGRES_PASSWORD: test
             POSTGRES_USER: test
