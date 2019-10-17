@@ -13,4 +13,3 @@ services:
         environment:
             POSTGRES_PASSWORD: test
             POSTGRES_USER: test
-            POSTGRES_DB: test
