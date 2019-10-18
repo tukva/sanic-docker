@@ -3,11 +3,11 @@ from aiopg.sa import create_engine
 from passlib.hash import bcrypt
 
 from db import connection
-from decorators import authorized
+from decorators import authorized_and_user_has
 from models.user import tb_user
 
 
-@authorized()
+@authorized_and_user_has("edit")
 async def reset_password(request):
     username = request.form.get('username')
     old_password = request.form.get('old_password')

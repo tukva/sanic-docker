@@ -49,7 +49,7 @@ def authorized_and_user_has(ability):
                             tb_user.select().where(tb_user.c.user_id == request.get("user_id")).limit(1))
                         async for r in result:
                             permission = r.permission
-                            if ability in permission:
+                            if any(elem in [ability, "all"] for elem in permission):
                                 return await f(request, *args, **kwargs)
                             else:
                                 return json({'Status': "You do not have access"}, 403)
