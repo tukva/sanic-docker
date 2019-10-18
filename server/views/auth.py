@@ -4,7 +4,7 @@ from passlib.hash import bcrypt
 import psycopg2.errors
 
 from db import connection
-from decorators import authorized
+from decorators import authorized_and_user_has
 from utils import generate_session_id
 from models.user import tb_user
 from models.session import tb_session
@@ -27,7 +27,7 @@ async def sign_up(request):
                     if user_id:
                         if user_id == 1:
                             await conn.execute(
-                                tb_user.update().where(tb_user.c.user_id == user_id).values(permission=["admin"]))
+                                tb_user.update().where(tb_user.c.user_id == user_id).values(permission=["all"]))
                     return json("Ok", 200)
             except psycopg2.Error as e:
                 return json(e.pgerror, 400)
@@ -51,7 +51,7 @@ async def sign_in(request):
             return json("Bad Request", 400)
 
 
-@authorized()
+@authorized_and_user_has("view")
 async def sign_out(request):
     async with create_engine(connection) as engine:
         async with engine.acquire() as conn:
