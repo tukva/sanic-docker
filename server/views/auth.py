@@ -8,6 +8,7 @@ from decorators import authorized_and_user_has
 from utils import generate_session_id
 from models.user import tb_user
 from models.session import tb_session
+from models.user_group import tb_user_group
 
 
 async def sign_up(request):
@@ -20,14 +21,14 @@ async def sign_up(request):
         async with engine.acquire() as conn:
             try:
                 result = await conn.execute(tb_user.insert().values(username=username,
-                                                                    password=bcrypt.hash(password),
-                                                                    permission=["view"]))
+                                                                    password=bcrypt.hash(password)))
                 async for r in result:
                     user_id = r.user_id
                     if user_id:
                         if user_id == 1:
-                            await conn.execute(
-                                tb_user.update().where(tb_user.c.user_id == user_id).values(permission=["all"]))
+                            await conn.execute(tb_user_group.insert().values(user_id=user_id, group_id=1))
+                        else:
+                            await conn.execute(tb_user_group.insert().values(user_id=user_id, group_id=2))
                     return json("Ok", 200)
             except psycopg2.Error as e:
                 return json(e.pgerror, 400)

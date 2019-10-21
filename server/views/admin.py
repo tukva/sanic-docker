@@ -3,10 +3,10 @@ from sanic.response import json
 
 from db import connection
 from models.user import tb_user
-from decorators import authorized_and_user_has
+from decorators import authorized_and_user_in_group
 
 
-@authorized_and_user_has("all")
+@authorized_and_user_in_group("admins")
 async def permit_edit(request, user_id):
     async with create_engine(connection) as engine:
         async with engine.acquire() as conn:
