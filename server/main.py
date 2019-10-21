@@ -10,7 +10,7 @@ app = Sanic(name=__name__)
 
 app.register_listener(prepare_db, "before_server_start")
 
-app.add_route(permit_edit, '/permit-edit/users/<user_id>', methods=['PATCH'])
+app.add_route(permit_edit, '/permit-edit', methods=['PATCH'])
 
 app.add_route(sign_up, '/sign-up', methods=['POST'])
 app.add_route(sign_in, '/sign-in', methods=['POST'])

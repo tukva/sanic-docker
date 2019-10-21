@@ -80,7 +80,6 @@ def authorized_and_user_in_group(ability):
                         j = tb_user\
                             .join(tb_user_group, tb_user.c.user_id == tb_user_group.c.user_id)\
                             .join(tb_group, tb_user_group.c.group_id == tb_group.c.group_id)
-                        print(j)
                         result = conn.execute(select([tb_group.c.name]).select_from(j)
                                               .where(tb_user.c.user_id == request["user_id"]))
                         async for r in result:
