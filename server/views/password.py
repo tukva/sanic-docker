@@ -8,13 +8,13 @@ from marshmallow.exceptions import ValidationError
 from db import connection
 from decorators import authorized_and_user_has
 from models.user import tb_user
-from schemas import ResetPasswordRequestSchema
+from schemas import ResetPasswordSchema
 
 
 @authorized_and_user_has("edit")
 async def reset_password(request):
     try:
-        data = ResetPasswordRequestSchema().load(request.form)
+        data = ResetPasswordSchema().load(request.form)
         if data["new_password"] != data["new_password_repeat"]:
             return json("Bad Request. New passwords don't match", 400)
         async with create_engine(connection) as engine:

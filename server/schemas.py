@@ -1,41 +1,54 @@
 from marshmallow import Schema, fields, validate
 
 
-class SignupRequestSchema(Schema):
+class SignupSchema(Schema):
     username = fields.Str(
-        validate=validate.Length(max=40), required=True
+        validate=validate.Length(min=4, max=40), required=True, nullable=False
     )
     password = fields.Str(
-        validate=validate.Length(max=255), required=True
+        validate=validate.Length(min=6, max=255), required=True, nullable=False, load_only=True
     )
     password_repeat = fields.Str(
-        validate=validate.Length(max=255), required=True
+        validate=validate.Length(min=6, max=255), required=True, nullable=False, load_only=True
     )
 
 
-class SigninRequestSchema(Schema):
+class SigninSchema(Schema):
     username = fields.Str(
-        validate=validate.Length(max=40), required=True
+        validate=validate.Length(min=4, max=40), required=True, nullable=False
     )
     password = fields.Str(
-        validate=validate.Length(max=255), required=True
+        validate=validate.Length(min=6, max=255), required=True, nullable=False, load_only=True
     )
 
 
-class ResetPasswordRequestSchema(Schema):
+class ResetPasswordSchema(Schema):
     username = fields.Str(
-        validate=validate.Length(max=40), required=True
+        validate=validate.Length(min=4, max=40), required=True, nullable=False
     )
     old_password = fields.Str(
-        validate=validate.Length(max=255), required=True
+        validate=validate.Length(min=6, max=255), required=True, nullable=False, load_only=True
     )
     new_password = fields.Str(
-        validate=validate.Length(max=255), required=True
+        validate=validate.Length(min=6, max=255), required=True, nullable=False, load_only=True
     )
     new_password_repeat = fields.Str(
-        validate=validate.Length(max=255), required=True
+        validate=validate.Length(min=6, max=255), required=True, nullable=False, load_only=True
     )
 
 
-class PermitEditRequestSchema(Schema):
-    user_id = fields.Int(required=True)
+class PermitEditSchema(Schema):
+    user_id = fields.Int(required=True, nullable=False)
+
+
+# class UserSchema(Schema):
+#     user_id = fields.Int(required=True, nullable=False, dump_only=True)
+#     username = fields.Str(
+#         validate=validate.Length(min=4, max=40), required=True, nullable=False
+#     )
+#     password = fields.Str(
+#         validate=validate.Length(min=6, max=255), required=True, nullable=False, load_only=True
+#     )
+#     password_repeat = fields.Str(
+#         validate=validate.Length(min=6, max=255), required=True, nullable=False, load_only=True
+#     )

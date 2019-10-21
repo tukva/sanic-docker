@@ -7,13 +7,13 @@ from marshmallow.exceptions import ValidationError
 from db import connection
 from models.user_group import tb_user_group
 from decorators import authorized_and_user_in_group
-from schemas import PermitEditRequestSchema
+from schemas import PermitEditSchema
 
 
 @authorized_and_user_in_group("admins")
 async def permit_edit(request):
     try:
-        data = PermitEditRequestSchema().load(request.form)
+        data = PermitEditSchema().load(request.form)
         async with create_engine(connection) as engine:
             async with engine.acquire() as conn:
                 try:

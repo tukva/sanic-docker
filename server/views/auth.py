@@ -11,12 +11,12 @@ from utils import generate_session_id
 from models.user import tb_user
 from models.session import tb_session
 from models.user_group import tb_user_group
-from schemas import SignupRequestSchema, SigninRequestSchema
+from schemas import SignupSchema, SigninSchema
 
 
 async def sign_up(request):
     try:
-        data = SignupRequestSchema().load(request.form)
+        data = SignupSchema().load(request.form)
         if data["password"] != data["password_repeat"]:
             return json("Bad Request. Passwords don't match", 400)
         async with create_engine(connection) as engine:
@@ -40,7 +40,7 @@ async def sign_up(request):
 
 async def sign_in(request):
     try:
-        data = SigninRequestSchema().load(request.form)
+        data = SigninSchema().load(request.form)
         async with create_engine(connection) as engine:
             async with engine.acquire() as conn:
                 result = conn.execute(tb_user.select().where(tb_user.c.username == data["username"]).limit(1))
