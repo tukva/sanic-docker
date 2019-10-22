@@ -52,10 +52,10 @@ def authorized_and_user_has(ability):
                         .join(tb_group, tb_user_group.c.group_id == tb_group.c.group_id)\
                         .join(tb_group_permission, tb_group.c.group_id == tb_group_permission.c.group_id)\
                         .join(tb_permission, tb_group_permission.c.permission_id == tb_permission.c.permission_id)
-                    result = await conn.execute(select([tb_permission.c.name]).select_from(j)
-                                                .where(tb_user.c.user_id == request["user_id"]))
-                    async for r in result:
-                        permission = r.name
+                    permissions = await conn.execute(select([tb_permission.c.name]).select_from(j).where(
+                        tb_user.c.user_id == request["user_id"]))
+                    async for p in permissions:
+                        permission = p.name
                         if ability == permission:
                             return await f(request, *args, **kwargs)
                     else:
@@ -66,7 +66,7 @@ def authorized_and_user_has(ability):
     return decorator
 
 
-def authorized_and_user_in_group(ability):
+def authorized_and_user_in_group(group):
     def decorator(f):
         @wraps(f)
         async def decorated_function(request, *args, **kwargs):
@@ -76,11 +76,11 @@ def authorized_and_user_in_group(ability):
                     j = tb_user\
                         .join(tb_user_group, tb_user.c.user_id == tb_user_group.c.user_id)\
                         .join(tb_group, tb_user_group.c.group_id == tb_group.c.group_id)
-                    result = await conn.execute(select([tb_group.c.name]).select_from(j)
-                                                .where(tb_user.c.user_id == request["user_id"]))
-                    async for r in result:
-                        group = r.name
-                        if ability == group:
+                    groups = await conn.execute(select([tb_group.c.name]).select_from(j).where(
+                        tb_user.c.user_id == request["user_id"]))
+                    async for g in groups:
+                        group_name = g.name
+                        if group == group_name:
                             return await f(request, *args, **kwargs)
                     else:
                         return json({'Status': "You do not have access"}, 403)
