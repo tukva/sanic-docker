@@ -2,12 +2,12 @@ from functools import wraps
 from sanic.response import json
 from sqlalchemy.sql import select
 
-from models.user import tb_user
-from models.session import tb_session
-from models.permission import tb_permission
-from models.user_group import tb_user_group
-from models.group import tb_group
-from models.group_permission import tb_group_permission
+from models import tb_user
+from models import tb_session
+from models import tb_permission
+from models import tb_user_group
+from models import tb_group
+from models import tb_group_permission
 from engine import Connection
 
 

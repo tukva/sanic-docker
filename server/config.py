@@ -1,9 +1,11 @@
-database_name = 'test'
-database_host = 'database'
-database_user = 'test'
-database_password = 'test'
+from os import getenv
 
-url = 'postgres://{0}:{1}@{2}/{3}'.format(database_user,
-                                          database_password,
-                                          database_host,
-                                          database_name)
+POSTGRES_HOST = "database"
+POSTGRES_DB = getenv("POSTGRES_DB")
+POSTGRES_USER = getenv("POSTGRES_USER")
+POSTGRES_PASSWORD = getenv("POSTGRES_PASSWORD")
+
+url = 'postgres://{0}:{1}@{2}/{3}'.format(POSTGRES_USER,
+                                          POSTGRES_PASSWORD,
+                                          POSTGRES_HOST,
+                                          POSTGRES_DB)

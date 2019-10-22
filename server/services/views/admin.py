@@ -3,10 +3,10 @@ from sanic.response import json
 from sanic.exceptions import abort
 from marshmallow.exceptions import ValidationError
 
-from models.user_group import tb_user_group
-from decorators import authorized_and_user_in_group
+from models import tb_user_group
+from services.decorators import authorized_and_user_in_group
 from engine import Connection
-from schemas import PermitEditSchema
+from services.forms import PermitEditSchema
 
 
 @authorized_and_user_in_group("admins")

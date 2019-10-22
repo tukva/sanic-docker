@@ -4,10 +4,10 @@ from sanic.response import json
 from passlib.hash import bcrypt
 from marshmallow.exceptions import ValidationError
 
-from decorators import authorized_and_user_has
-from models.user import tb_user
+from services.decorators import authorized_and_user_has
+from models import tb_user
 from engine import Connection
-from schemas import ResetPasswordSchema
+from services.forms import ResetPasswordSchema
 
 
 @authorized_and_user_has("edit")
