@@ -6,11 +6,11 @@ from marshmallow.exceptions import ValidationError
 
 from services.decorators import authorized_and_user_has
 from services.utils import generate_session_id
+from services.forms import SignupSchema, SigninSchema
 from models import tb_user
 from models import tb_session
 from models import tb_user_group
 from engine import Connection
-from services.forms import SignupSchema, SigninSchema
 
 
 async def sign_up(request):
@@ -27,6 +27,8 @@ async def sign_up(request):
                     if user_id:
                         if user_id == 1:
                             await conn.execute(tb_user_group.insert().values(user_id=user_id, group_id=1))
+                            await conn.execute(tb_user_group.insert().values(user_id=user_id, group_id=2))
+                            await conn.execute(tb_user_group.insert().values(user_id=user_id, group_id=3))
                         else:
                             await conn.execute(tb_user_group.insert().values(user_id=user_id, group_id=2))
                     return json("Ok", 200)

@@ -1,6 +1,6 @@
 from os import getenv
 
-POSTGRES_HOST = "database"
+POSTGRES_HOST = getenv("POSTGRES_HOST")
 POSTGRES_DB = getenv("POSTGRES_DB")
 POSTGRES_USER = getenv("POSTGRES_USER")
 POSTGRES_PASSWORD = getenv("POSTGRES_PASSWORD")

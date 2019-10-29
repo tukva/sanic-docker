@@ -10,7 +10,7 @@ from engine import Connection
 from services.forms import ResetPasswordSchema
 
 
-@authorized_and_user_has("edit")
+@authorized_and_user_has("view")
 async def reset_password(request):
     try:
         data = ResetPasswordSchema().load(request.form)

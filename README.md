@@ -7,7 +7,7 @@
 
 ## Run with docker
 
-1. Run via `make run_project`
+Run via `make run_project`
 
 ## Run psql
 

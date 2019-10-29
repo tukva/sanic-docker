@@ -35,20 +35,3 @@ class ResetPasswordSchema(Schema):
     new_password_repeat = fields.Str(
         validate=validate.Length(min=6, max=255), required=True, nullable=False, load_only=True
     )
-
-
-class PermitEditSchema(Schema):
-    user_id = fields.Int(required=True, nullable=False)
-
-
-# class UserSchema(Schema):
-#     user_id = fields.Int(required=True, nullable=False, dump_only=True)
-#     username = fields.Str(
-#         validate=validate.Length(min=4, max=40), required=True, nullable=False
-#     )
-#     password = fields.Str(
-#         validate=validate.Length(min=6, max=255), required=True, nullable=False, load_only=True
-#     )
-#     password_repeat = fields.Str(
-#         validate=validate.Length(min=6, max=255), required=True, nullable=False, load_only=True
-#     )
