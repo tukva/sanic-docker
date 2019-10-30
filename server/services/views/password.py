@@ -4,13 +4,13 @@ from sanic.response import json
 from passlib.hash import bcrypt
 from marshmallow.exceptions import ValidationError
 
-from services.decorators import authorized_and_user_has
+from services.decorators import authorized
 from models import tb_user
 from engine import Connection
 from services.forms import ResetPasswordSchema
 
 
-@authorized_and_user_has("view")
+@authorized()
 async def reset_password(request):
     try:
         data = ResetPasswordSchema().load(request.form)

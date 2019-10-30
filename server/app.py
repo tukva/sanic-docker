@@ -1,4 +1,5 @@
 from sanic import Sanic
+
 from routes import add_routes
 
 app = Sanic(name=__name__)

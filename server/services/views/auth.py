@@ -4,7 +4,7 @@ from sanic.exceptions import abort
 from passlib.hash import bcrypt
 from marshmallow.exceptions import ValidationError
 
-from services.decorators import authorized_and_user_has
+from services.decorators import authorized
 from services.utils import generate_session_id
 from services.forms import SignupSchema, SigninSchema
 from models import tb_user
@@ -57,7 +57,7 @@ async def sign_in(request):
         abort(400, message=e)
 
 
-@authorized_and_user_has("view")
+@authorized()
 async def sign_out(request):
     async with Connection() as conn:
         await conn.execute(tb_session.delete().where(tb_session.c.user_id == request.get("user_id")))

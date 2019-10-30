@@ -13,8 +13,8 @@ from engine import Connection
 
 async def check_request_for_authorization_status(request):
     session = request.cookies.get('session')
+    flag = False
     if session:
-        flag = False
         async with Connection() as conn:
             result = await conn.execute(tb_session.select().where(tb_session.c.session_id == session).limit(1))
             async for r in result:
@@ -25,19 +25,19 @@ async def check_request_for_authorization_status(request):
     return flag
 
 
-# def authorized():
-#     def decorator(f):
-#         @wraps(f)
-#         async def decorated_function(request, *args, **kwargs):
-#             is_authorized = await check_request_for_authorization_status(request)
-#
-#             if is_authorized:
-#                 response = await f(request, *args, **kwargs)
-#                 return response
-#             else:
-#                 return json({'Status': 'Not_authorized'}, 403)
-#         return decorated_function
-#     return decorator
+def authorized():
+    def decorator(f):
+        @wraps(f)
+        async def decorated_function(request, *args, **kwargs):
+            is_authorized = await check_request_for_authorization_status(request)
+
+            if is_authorized:
+                response = await f(request, *args, **kwargs)
+                return response
+            else:
+                return json({'Status': 'Not_authorized'}, 403)
+        return decorated_function
+    return decorator
 
 
 def authorized_and_user_has(ability):

@@ -11,8 +11,8 @@ tb_user = sa.Table(
 
 tb_user_group = sa.Table(
     'tb_user_group', metadata,
-    sa.Column('user_id', sa.Integer, sa.ForeignKey('tb_user.id')),
-    sa.Column('group_id', sa.Integer, sa.ForeignKey('tb_group.id')))
+    sa.Column('user_id', sa.Integer, sa.ForeignKey('tb_user.user_id')),
+    sa.Column('group_id', sa.Integer, sa.ForeignKey('tb_group.group_id')))
 
 tb_group = sa.Table(
     'tb_group', metadata,
@@ -21,8 +21,8 @@ tb_group = sa.Table(
 
 tb_group_permission = sa.Table(
     'tb_group_permission', metadata,
-    sa.Column('group_id', sa.Integer, sa.ForeignKey('tb_group.id')),
-    sa.Column('permission_id', sa.Integer, sa.ForeignKey('tb_permission.id')))
+    sa.Column('group_id', sa.Integer, sa.ForeignKey('tb_group.group_id')),
+    sa.Column('permission_id', sa.Integer, sa.ForeignKey('tb_permission.permission_id')))
 
 tb_permission = sa.Table(
     'tb_permission', metadata,

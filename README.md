@@ -18,3 +18,7 @@ Run via `make run_psql`
 
 1. Add new sql script to server/sql  with semantic name like "001_create_user_table"
 1. Create change via `docker-compose run --rm liquibase update` 
+
+## Run tests with docker
+
+Run via `make run_tests`
