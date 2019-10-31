@@ -40,3 +40,4 @@ async def test_sign_out(test_cli, add_session):
 
     resp = await test_cli.post('/sign-out')
     assert resp.status == 403
+    assert await resp.text() == '{"Status":"Not_authorized"}'
