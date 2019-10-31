@@ -18,6 +18,11 @@ class Engine:
         return await cls._engine.acquire()
 
     @classmethod
+    async def close(cls):
+        cls._engine.close()
+        await cls._engine.wait_closed()
+
+    @classmethod
     async def release(cls, connection):
         await  cls._engine.release(connection)
 

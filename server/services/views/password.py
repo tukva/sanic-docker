@@ -15,7 +15,7 @@ async def reset_password(request):
     try:
         data = ResetPasswordSchema().load(request.form)
         if data["new_password"] != data["new_password_repeat"]:
-            return json("Bad Request. New passwords don't match", 400)
+            return json("Locked. New passwords don't match", 423)
         async with Connection() as conn:
             result = await conn.execute(tb_user.select().where(tb_user.c.username == data["username"]).limit(1))
             async for r in result:
@@ -27,6 +27,6 @@ async def reset_password(request):
                             password=bcrypt.hash(data["new_password"])))
                         if result.rowcount:
                             return json("Ok", 200)
-            return json("Bad Request", 400)
+            return json("Locked", 423)
     except (ValidationError, psycopg2.DataError) as e:
         abort(400, message=e)

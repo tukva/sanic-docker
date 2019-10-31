@@ -17,7 +17,7 @@ async def sign_up(request):
     try:
         data = SignupSchema().load(request.form)
         if data["password"] != data["password_repeat"]:
-            return json("Bad Request. Passwords don't match", 400)
+            return json("Locked. Passwords don't match", 423)
         async with Connection() as conn:
             try:
                 result = await conn.execute(tb_user.insert().values(username=data["username"],
@@ -33,7 +33,7 @@ async def sign_up(request):
                             await conn.execute(tb_user_group.insert().values(user_id=user_id, group_id=2))
                     return json("Ok", 200)
             except psycopg2.Error as e:
-                abort(400, message=e)
+                abort(423, message=e)
     except (ValidationError, psycopg2.DataError) as e:
         abort(400, message=e)
 
@@ -52,7 +52,7 @@ async def sign_in(request):
                         response = json("Ok", 200)
                         response.cookies['session'] = session_id
                         return response
-            return json("Bad Request", 400)
+            return json("Locked", 423)
     except (ValidationError, psycopg2.DataError) as e:
         abort(400, message=e)
 

@@ -1,5 +1,9 @@
 from engine import Engine
 
 
-async def prepare_db(app, loop):
+async def acquire_con(app, loop):
     await Engine.init()
+
+
+async def close_con(app, loop):
+    await Engine.close()
