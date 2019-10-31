@@ -1,3 +1,9 @@
+import pytest
+
+
+@pytest.mark.SSO
+@pytest.mark.auth
+@pytest.mark.sign_up
 async def test_sign_up(test_cli, tables):
     resp = await test_cli.post('/sign-up', data={"username": "test_data",
                                                  "password": "test_data",
@@ -17,6 +23,9 @@ async def test_sign_up(test_cli, tables):
     assert await resp.text() == '"Locked. Passwords don\'t match"'
 
 
+@pytest.mark.SSO
+@pytest.mark.auth
+@pytest.mark.sign_in
 async def test_sign_in(test_cli, add_user):
     resp = await test_cli.post('/sign-in', data={"username": "test_data",
                                                  "password": "test_data"})
@@ -33,6 +42,9 @@ async def test_sign_in(test_cli, add_user):
     assert await resp.text() == '"Locked"'
 
 
+@pytest.mark.SSO
+@pytest.mark.auth
+@pytest.mark.sign_out
 async def test_sign_out(test_cli, add_session):
     resp = await test_cli.post('/sign-out', cookies={"session": add_session})
     assert resp.status == 200

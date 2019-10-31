@@ -1,3 +1,9 @@
+import pytest
+
+
+@pytest.mark.SSO
+@pytest.mark.password
+@pytest.mark.reset_password
 async def test_reset_password(test_cli, add_session):
     resp = await test_cli.patch('/reset-password',
                                 data={"username": "test_data",
