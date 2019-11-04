@@ -14,7 +14,7 @@ Run via `make run_project`
 Run via `make run_psql`
 
 
-##Create a migration on DB schema change
+## Create a migration on DB schema change
 
 1. Add new sql script to server/sql  with semantic name like "001_create_user_table"
 1. Create change via `docker-compose run --rm liquibase update` 
