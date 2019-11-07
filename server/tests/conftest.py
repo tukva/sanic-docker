@@ -29,7 +29,6 @@ async def drop_tables():
         await conn.execute(DropTable(SSO.group))
         await conn.execute(DropTable(SSO.session))
         await conn.execute(DropTable(SSO.permission))
-        assert True
 
 
 async def create_tables():
@@ -51,7 +50,6 @@ async def create_tables():
         await conn.execute(SSO.group_permission.insert().values(permission_id=1, group_id=3))
         await conn.execute(SSO.group_permission.insert().values(permission_id=2, group_id=2))
         await conn.execute(SSO.group_permission.insert().values(permission_id=2, group_id=3))
-        assert True
 
 
 @pytest.fixture
