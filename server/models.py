@@ -2,7 +2,7 @@ import sqlalchemy as sa
 from sqlalchemy.dialects.postgresql import UUID
 
 
-class _SSO:
+class SSO:
     metadata = sa.MetaData()
 
     def __init__(self):
@@ -69,4 +69,4 @@ class _SSO:
         return tb_session
 
 
-SSO = _SSO()
+_SSO = SSO()

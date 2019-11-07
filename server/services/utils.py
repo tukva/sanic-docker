@@ -5,7 +5,7 @@ from sqlalchemy.sql import select
 from passlib.hash import bcrypt
 from sanic.response import json
 
-from models import SSO
+from models import _SSO as SSO
 
 
 async def check_request_for_authorization_status(request, conn):
