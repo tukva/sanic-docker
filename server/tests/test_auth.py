@@ -20,7 +20,7 @@ async def test_sign_up(test_cli, tables):
                                                  "password": "test_data_3",
                                                  "password_repeat": "wrong_test_data_3"})
     assert resp.status == 423
-    assert await resp.text() == '"Locked. Passwords don\'t match"'
+    assert await resp.text() == "Error: Passwords don\'t match"
 
 
 @pytest.mark.SSO
@@ -51,5 +51,5 @@ async def test_sign_out(test_cli, add_session):
     assert await resp.text() == '"Ok"'
 
     resp = await test_cli.post('/sign-out')
-    assert resp.status == 403
+    assert resp.status == 401
     assert await resp.text() == '{"Status":"Not_authorized"}'

@@ -10,7 +10,7 @@ async def test_reset_password(test_cli, add_session):
                                       "old_password": "test_data",
                                       "new_password": "new_test_data",
                                       "new_password_repeat": "new_test_data"})
-    assert resp.status == 403
+    assert resp.status == 401
     assert await resp.text() == '{"Status":"Not_authorized"}'
 
     resp = await test_cli.patch('/reset-password', cookies={"session": add_session},
@@ -35,4 +35,4 @@ async def test_reset_password(test_cli, add_session):
                                       "new_password": "new_test_data",
                                       "new_password_repeat": "test_data"})
     assert resp.status == 423
-    assert await resp.text() == '"Locked. New passwords don\'t match"'
+    assert await resp.text() == "Error: New passwords don\'t match"
