@@ -3,7 +3,7 @@ import uuid
 import psycopg2
 from sqlalchemy.sql import select
 from passlib.hash import bcrypt
-from sanic.response import json
+from sanic.response import text
 
 from models import _SSO as SSO
 
@@ -54,41 +54,43 @@ async def check_group(request, conn,  group):
 
 async def do_sign_up(conn, data):
     try:
-        result = await conn.execute(SSO.user.insert().values(username=data["username"],
-                                                             password=bcrypt.hash(data["password"])))
-        row = await result.fetchone()
-        if row:
-            await conn.execute(SSO.user_group.insert().values(user_id=row.user_id, group_id=2))
-            return json("Ok", 200)
+        user = await conn.execute(SSO.user.insert().values(username=data["username"],
+                                                           password=bcrypt.hash(data["password"])))
+        row = await user.fetchone()
+        await conn.execute(SSO.user_group.insert().values(user_id=row.user_id, group_id=2))
+        return text("Ok", 200)
     except psycopg2.Error:
-        return json("Locked", 423)
+        return text("Username already exists", 423)
 
 
 async def do_sign_in(conn, data):
-    result = await conn.execute(SSO.user.select().where(SSO.user.c.username == data["username"]))
-    row = await result.fetchone()
-    if row and bcrypt.verify(data["password"], row.password):
-        await conn.execute(SSO.session.delete().where(SSO.session.c.user_id == row.user_id))
-        session_id = str(uuid.uuid4())
-        await conn.execute(SSO.session.insert().values(session_id=session_id, user_id=row.user_id))
-        response = json("Ok", 200)
-        response.cookies['session'] = session_id
-        return response
-    return json("Locked", 423)
+    user = await conn.execute(SSO.user.select().where(SSO.user.c.username == data["username"]))
+    row = await user.fetchone()
+    if not row:
+        return text("Wrong username", 423)
+    if not bcrypt.verify(data["password"], row.password):
+        return text("Wrong password", 423)
+    await conn.execute(SSO.session.delete().where(SSO.session.c.user_id == row.user_id))
+    session_id = str(uuid.uuid4())
+    await conn.execute(SSO.session.insert().values(session_id=session_id, user_id=row.user_id))
+    response = text("Ok", 200)
+    response.cookies['session'] = session_id
+    return response
 
 
 async def do_sign_out(request, conn):
     await conn.execute(SSO.session.delete().where(SSO.session.c.user_id == request.get("user_id")))
-    return json("Ok", 200)
+    return text("Ok", 200)
 
 
 async def do_reset_password(conn, data):
-    result = await conn.execute(SSO.user.select().where(SSO.user.c.username == data["username"]))
-    row = await result.fetchone()
-    if row and bcrypt.verify(data["old_password"], row.password):
-        result = await conn.execute(SSO.user.update().where(
-            SSO.user.c.username == data["username"]).values(
-            password=bcrypt.hash(data["new_password"])))
-        if result.rowcount:
-            return json("Ok", 200)
-    return json("Locked", 423)
+    user = await conn.execute(SSO.user.select().where(SSO.user.c.username == data["username"]))
+    row = await user.fetchone()
+    if not row:
+        return text("Wrong username", 423)
+    if not bcrypt.verify(data["old_password"], row.password):
+        return text("Wrong old password", 423)
+    await conn.execute(SSO.user.update().where(
+        SSO.user.c.username == data["username"]).values(
+        password=bcrypt.hash(data["new_password"])))
+    return text("Ok", 200)

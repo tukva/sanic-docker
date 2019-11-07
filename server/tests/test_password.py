@@ -19,7 +19,7 @@ async def test_reset_password(test_cli, add_session):
                                       "new_password": "new_test_data",
                                       "new_password_repeat": "new_test_data"})
     assert resp.status == 200
-    assert await resp.text() == '"Ok"'
+    assert await resp.text() == "Ok"
 
     resp = await test_cli.patch('/reset-password', cookies={"session": add_session},
                                 data={"username": "wrong_test_data",
@@ -27,7 +27,15 @@ async def test_reset_password(test_cli, add_session):
                                       "new_password": "new_test_data",
                                       "new_password_repeat": "new_test_data"})
     assert resp.status == 423
-    assert await resp.text() == '"Locked"'
+    assert await resp.text() == "Wrong username"
+
+    resp = await test_cli.patch('/reset-password', cookies={"session": add_session},
+                                data={"username": "test_data",
+                                      "old_password": "wrong_test_data",
+                                      "new_password": "new_test_data",
+                                      "new_password_repeat": "new_test_data"})
+    assert resp.status == 423
+    assert await resp.text() == "Wrong old password"
 
     resp = await test_cli.patch('/reset-password', cookies={"session": add_session},
                                 data={"username": "test_data",

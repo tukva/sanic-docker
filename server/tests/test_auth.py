@@ -9,9 +9,15 @@ async def test_sign_up(test_cli, tables):
                                                  "password": "test_data",
                                                  "password_repeat": "test_data"})
     assert resp.status == 200
-    assert await resp.text() == '"Ok"'
+    assert await resp.text() == "Ok"
 
-    resp = await test_cli.post('/sign-up', data={"user": "test_data_2",
+    resp = await test_cli.post('/sign-up', data={"username": "test_data",
+                                                 "password": "test_data",
+                                                 "password_repeat": "test_data"})
+    assert resp.status == 423
+    assert await resp.text() == "Username already exists"
+
+    resp = await test_cli.post('/sign-up', data={"wrong_test_key": "test_data_2",
                                                  "password": "test_data_2",
                                                  "password_repeat": "test_data_2"})
     assert resp.status == 400
@@ -30,16 +36,21 @@ async def test_sign_in(test_cli, add_user):
     resp = await test_cli.post('/sign-in', data={"username": "test_data",
                                                  "password": "test_data"})
     assert resp.status == 200
-    assert await resp.text() == '"Ok"'
+    assert await resp.text() == "Ok"
 
-    resp = await test_cli.post('/sign-in', data={"user": "test_data_2",
+    resp = await test_cli.post('/sign-in', data={"wrong_test_key": "test_data_2",
                                                  "password": "test_data_2"})
     assert resp.status == 400
 
-    resp = await test_cli.post('/sign-in', data={"username": "test_data_3",
+    resp = await test_cli.post('/sign-in', data={"username": "wrong_test_data",
                                                  "password": "test_data_3"})
     assert resp.status == 423
-    assert await resp.text() == '"Locked"'
+    assert await resp.text() == "Wrong username"
+
+    resp = await test_cli.post('/sign-in', data={"username": "test_data",
+                                                 "password": "wrong_test_data"})
+    assert resp.status == 423
+    assert await resp.text() == "Wrong password"
 
 
 @pytest.mark.SSO
@@ -48,7 +59,7 @@ async def test_sign_in(test_cli, add_user):
 async def test_sign_out(test_cli, add_session):
     resp = await test_cli.post('/sign-out', cookies={"session": add_session})
     assert resp.status == 200
-    assert await resp.text() == '"Ok"'
+    assert await resp.text() == "Ok"
 
     resp = await test_cli.post('/sign-out')
     assert resp.status == 401
