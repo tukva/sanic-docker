@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+  <changeSet id="008" author="test">
+    <sql>
+        INSERT INTO tb_group (name) VALUES ('admins');
+        INSERT INTO tb_group (name) VALUES ('viewers');
+        INSERT INTO tb_group (name) VALUES ('editors');
+    </sql>
+    <rollback>
+        <sql>
+            DELETE FROM tb_group WHERE name = 'admins';
+            DELETE FROM tb_group WHERE name = 'viewers';
+            DELETE FROM tb_group WHERE name = 'editors';
+        </sql>
+    </rollback>
+  </changeSet>
+</databaseChangeLog>

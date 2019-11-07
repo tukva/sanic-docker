@@ -1,6 +1,6 @@
 import aiopg.sa
 
-from config import url
+from config import url, DB_POOL_SIZE_MIN, DB_POOL_SIZE_MAX
 
 
 class Engine:
@@ -11,7 +11,9 @@ class Engine:
 
     @classmethod
     async def init(cls):
-        cls._engine = await aiopg.sa.create_engine(url)
+        cls._engine = await aiopg.sa.create_engine(url,
+                                                   minsize=DB_POOL_SIZE_MIN,
+                                                   maxsize=DB_POOL_SIZE_MAX)
 
     @classmethod
     async def acquire(cls):
