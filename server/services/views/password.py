@@ -1,4 +1,4 @@
-from sanic.exceptions import abort
+from sanic.response import json
 from marshmallow.exceptions import ValidationError
 
 from services.decorators import authorized
@@ -10,11 +10,10 @@ from services.utils import do_reset_password
 @authorized()
 async def reset_password(request):
     try:
-        data = ResetPasswordSchema().load(request.form)
+        data = ResetPasswordSchema().load(request.json)
     except ValidationError as e:
-        abort(400, message=e)
+        return json(e, 400)
     except PasswordMatchError as e:
-        abort(423, message=e)
-    else:
-        async with Connection() as conn:
-            return await do_reset_password(conn, data)
+        return json(e.args, 423)
+    async with Connection() as conn:
+        return await do_reset_password(conn, data)

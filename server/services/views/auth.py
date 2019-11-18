@@ -1,4 +1,4 @@
-from sanic.exceptions import abort
+from sanic.response import json
 from marshmallow.exceptions import ValidationError
 
 from services.decorators import authorized
@@ -9,24 +9,22 @@ from services.utils import do_sign_up, do_sign_in, do_sign_out
 
 async def sign_up(request):
     try:
-        data = SignupSchema().load(request.form)
+        data = SignupSchema().load(request.json)
     except ValidationError as e:
-        abort(400, message=e)
+        return json(e, 400)
     except PasswordMatchError as e:
-        abort(423, message=e)
-    else:
-        async with Connection() as conn:
-            return await do_sign_up(conn, data)
+        return json(e.args, 423)
+    async with Connection() as conn:
+        return await do_sign_up(conn, data)
 
 
 async def sign_in(request):
     try:
-        data = SigninSchema().load(request.form)
+        data = SigninSchema().load(request.json)
     except ValidationError as e:
-        abort(400, message=e)
-    else:
-        async with Connection() as conn:
-            return await do_sign_in(conn, data)
+        return json(e, 400)
+    async with Connection() as conn:
+        return await do_sign_in(conn, data)
 
 
 @authorized()
