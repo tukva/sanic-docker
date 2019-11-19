@@ -4,6 +4,7 @@ import psycopg2
 from sqlalchemy.sql import select
 from passlib.hash import bcrypt
 from sanic.response import json
+from sanic.log import logger
 
 from models import _SSO as SSO
 
@@ -56,7 +57,8 @@ async def do_sign_up(conn, data):
     try:
         user = await conn.execute(SSO.user.insert().values(username=data["username"],
                                                            password=bcrypt.hash(data["password"])))
-    except psycopg2.Error:
+    except psycopg2.Error as e:
+        logger.error(e)
         return json("Username already exists", 423)
     row = await user.fetchone()
     await conn.execute(SSO.user_group.insert().values(user_id=row.user_id, group_id=2))
