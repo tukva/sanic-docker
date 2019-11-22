@@ -7,7 +7,7 @@ from sanic.response import json
 from sanic.log import logger
 
 from models import _SSO as SSO
-from engine import WorkFlowEngine
+
 
 async def check_request_for_authorization_status(request, conn):
     session = request.cookies.get('session')
