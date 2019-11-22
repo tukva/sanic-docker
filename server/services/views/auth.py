@@ -13,7 +13,7 @@ async def sign_up(request):
         data = SignupSchema().load(request.json)
     except ValidationError as e:
         logger.error(e)
-        return json(e, 400)
+        return json(e.messages, 400)
     except PasswordMatchError as e:
         logger.error(e)
         return json(e.args, 423)
@@ -25,7 +25,7 @@ async def sign_in(request):
     try:
         data = SigninSchema().load(request.json)
     except ValidationError as e:
-        logger.error(e)
+        logger.error(e.messages)
         return json(e, 400)
     async with Connection() as conn:
         return await do_sign_in(conn, data)

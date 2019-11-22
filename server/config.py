@@ -8,7 +8,7 @@ POSTGRES_PASSWORD = getenv("POSTGRES_PASSWORD", "test")
 DB_POOL_SIZE_MIN = getenv("DB_POOL_SIZE_MIN", 1)
 DB_POOL_SIZE_MAX = getenv("DB_POOL_SIZE_MAX", 6)
 
-SSO_API_HOST = int(getenv('SSO_API_HOST', 8080))
+SSO_API_PORT = int(getenv('SSO_API_PORT', 8080))
 
 url = 'postgres://{0}:{1}@{2}:{3}/{4}'.format(POSTGRES_USER,
                                               POSTGRES_PASSWORD,

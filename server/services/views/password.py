@@ -12,7 +12,7 @@ async def reset_password(request):
     try:
         data = ResetPasswordSchema().load(request.json)
     except ValidationError as e:
-        return json(e, 400)
+        return json(e.messages, 400)
     except PasswordMatchError as e:
         return json(e.args, 423)
     async with Connection() as conn:

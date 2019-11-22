@@ -1,6 +1,7 @@
 import aiopg.sa
 
 from config import url, DB_POOL_SIZE_MIN, DB_POOL_SIZE_MAX
+import aiohttp
 
 
 class Engine:
