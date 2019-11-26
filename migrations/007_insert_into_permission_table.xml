@@ -7,14 +7,14 @@
   <changeSet id="007" author="test">
     <sql>
         INSERT INTO tb_permission (name) VALUES ('special');
+        INSERT INTO tb_permission (name) VALUES ('moderate');
         INSERT INTO tb_permission (name) VALUES ('view');
-        INSERT INTO tb_permission (name) VALUES ('edit');
     </sql>
     <rollback>
         <sql>
             DELETE FROM tb_permission WHERE name = 'special';
+            DELETE FROM tb_permission WHERE name = 'moderate';
             DELETE FROM tb_permission WHERE name = 'view';
-            DELETE FROM tb_permission WHERE name = 'edit';
         </sql>
     </rollback>
   </changeSet>
