@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?> 
+<?xml version="1.0" encoding="UTF-8"?>
 <databaseChangeLog 
   xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9" 
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
@@ -6,16 +6,16 @@
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd"> 
   <changeSet id="007" author="test">
     <sql>
-        INSERT INTO tb_permission (name) VALUES ('special');
+        INSERT INTO tb_permission (name) VALUES ('approve');
+        INSERT INTO tb_permission (name) VALUES ('moderate');
         INSERT INTO tb_permission (name) VALUES ('view');
-        INSERT INTO tb_permission (name) VALUES ('edit');
     </sql>
     <rollback>
         <sql>
-            DELETE FROM tb_permission WHERE name = 'special';
+            DELETE FROM tb_permission WHERE name = 'approve';
+            DELETE FROM tb_permission WHERE name = 'moderate';
             DELETE FROM tb_permission WHERE name = 'view';
-            DELETE FROM tb_permission WHERE name = 'edit';
         </sql>
     </rollback>
   </changeSet>
-</databaseChangeLog> 
+</databaseChangeLog>
