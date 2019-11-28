@@ -7,14 +7,14 @@
   <changeSet id="008" author="test">
     <sql>
         INSERT INTO tb_group (name) VALUES ('admins');
+        INSERT INTO tb_group (name) VALUES ('moderators');
         INSERT INTO tb_group (name) VALUES ('viewers');
-        INSERT INTO tb_group (name) VALUES ('editors');
     </sql>
     <rollback>
         <sql>
             DELETE FROM tb_group WHERE name = 'admins';
+            DELETE FROM tb_group WHERE name = 'moderators';
             DELETE FROM tb_group WHERE name = 'viewers';
-            DELETE FROM tb_group WHERE name = 'editors';
         </sql>
     </rollback>
   </changeSet>
