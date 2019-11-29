@@ -4,17 +4,17 @@
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
-  <changeSet id="009" author="test">
+  <changeSet id="010" author="test">
     <sql>
-        INSERT INTO tb_group_permission VALUES (1, 1);
-        INSERT INTO tb_group_permission VALUES (2, 2);
-        INSERT INTO tb_group_permission VALUES (3, 3);
+        INSERT INTO tb_user VALUES ("admin", "adminbet");
+        INSERT INTO tb_user VALUES ("moderator", "moderator");
+        INSERT INTO tb_use VALUES ("viewer", "viewer");
     </sql>
     <rollback>
         <sql>
-            DELETE FROM tb_group_permission WHERE group_id = 1;
-            DELETE FROM tb_group_permission WHERE group_id = 2;
-            DELETE FROM tb_group_permission WHERE group_id = 3;
+            DELETE FROM tb_user WHERE user_id = 1;
+            DELETE FROM tb_user WHERE user_id = 2;
+            DELETE FROM tb_user WHERE user_id = 3;
         </sql>
     </rollback>
   </changeSet>
