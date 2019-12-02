@@ -18,4 +18,4 @@ def add_routes(app):
     app.add_route(check_auth, '/check-auth', methods=["POST"])
     app.add_route(check_auth_and_user_has, '/check-permission', methods=["POST"])
     app.add_route(check_auth_and_user_in_group, '/check-group', methods=["POST"])
-    app.add_route(check_auth_and_get_user_permissions, '/get-permissions', methods=["POST"])
+    app.add_route(check_auth_and_get_user_permissions, '/get-permissions', methods=["GET"])
