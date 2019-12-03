@@ -32,8 +32,8 @@ async def check_permission(request, conn, permission):
     # Return a new select() construct with the given FROM expression merged into its list of FROM object.
     permissions = await conn.execute(select([SSO.permission.c.name]).select_from(j).where(
         SSO.user.c.user_id == request["user_id"]))
-    async for p in permissions:
-        if permission == p.name:
+    async for perm in permissions:
+        if permission == perm.name:
             flag = True
     return flag
 
@@ -51,6 +51,22 @@ async def check_group(request, conn,  group):
         if group == g.name:
             flag = True
     return flag
+
+
+async def get_user_permissions(request, conn):
+    # Return a Join from this FromClause to another FromClause.
+    j = SSO.user \
+        .join(SSO.user_group, SSO.user.c.user_id == SSO.user_group.c.user_id) \
+        .join(SSO.group, SSO.user_group.c.group_id == SSO.group.c.group_id) \
+        .join(SSO.group_permission, SSO.group.c.group_id == SSO.group_permission.c.group_id) \
+        .join(SSO.permission, SSO.group_permission.c.permission_id == SSO.permission.c.permission_id)
+    # Return a new select() construct with the given FROM expression merged into its list of FROM object.
+    select_permissions = await conn.execute(select([SSO.permission.c.name]).select_from(j).where(
+        SSO.user.c.user_id == request["user_id"]))
+    permissions = []
+    async for perm in select_permissions:
+        permissions.append(perm.name)
+    return permissions
 
 
 async def do_sign_up(conn, data):
