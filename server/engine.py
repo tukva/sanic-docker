@@ -1,7 +1,6 @@
 import aiopg.sa
 
 from config import url, DB_POOL_SIZE_MIN, DB_POOL_SIZE_MAX
-import aiohttp
 
 
 class Engine:
@@ -45,51 +44,3 @@ class Connection:
 
     async def execute(self, statement):
         return await self._connection.execute(statement)
-
-
-class WorkFlowEngine:
-
-    base_url = "http://localhost:8080/engine-rest/engine/default"
-    id_process_definition = None
-    current_task = None
-
-    async def init(self, name_process_definition):
-        process_def_url = f"{self.base_url}/process-definition?name={name_process_definition}"
-        async with aiohttp.ClientSession() as session:
-            async with session.get(process_def_url) as resp:
-                process_def_list = await resp.json()
-                self.id_process_definition = process_def_list[0]["id"]
-                print(self.id_process_definition)
-                await self.set_current_task()
-
-    async def get_task_list(self):
-        tasks_url = f"{self.base_url}/external-task?processDefinitionId={self.id_process_definition}"
-        async with aiohttp.ClientSession() as session:
-            async with session.get(tasks_url) as resp:
-                task_list = await resp.json()
-                return task_list
-
-    async def get_current_task(self):
-        return self.current_task
-
-    async def set_current_task(self):
-        task_list = await self.get_task_list()
-        current_task = task_list[0]["id"]
-        self.current_task = current_task
-
-    async def task_complete(self, approved):
-        if not self.current_task:
-            await self.set_current_task()
-        complete_url = 'http://localhost:8080/engine-rest/engine/default/external-task/' + self.current_task + '/complete'
-        req_body = {
-            "variables": {
-                "approved": {
-                    "value": "true",
-                    "type": "Boolean"
-                }
-            },
-            "businessKey": "123"
-        }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(complete_url, json=req_body):
-                await self.set_current_task()
