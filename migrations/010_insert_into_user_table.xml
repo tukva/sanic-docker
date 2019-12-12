@@ -4,14 +4,18 @@
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
-  <changeSet context="sso" id="010" author="test" dbms="postgresql">
-    <sql>
+  <changeSet context="sso" id="insert_into_user_table" author="admin" dbms="postgresql">
+    <preConditions onFail="MARK_RAN">
+        <columnExists tableName="tb_user" columnName="username"/>
+        <columnExists tableName="tb_user" columnName="password"/>
+    </preConditions>
+    <sql stripComments="true">
         INSERT INTO tb_user (username, password) VALUES ('admin', '$2b$12$0ktB9IcVBUKP4ztnGsdmpu1PU2zLh7RLY37vZUe9OAugTNOjzdDvu');
         INSERT INTO tb_user (username, password) VALUES ('moderator', '$2b$12$Zm0jusaqZwPE0xJ5matyRO81TgT7y0hV5P.7eyvHVhNf16XX/SNJq');
         INSERT INTO tb_user (username, password) VALUES ('viewer', '$2b$12$.Og7px7poxdSIIA571Xo0O8n/R.Al67vOti9csKEdZcMRS4/ZkW0q');
     </sql>
     <rollback>
-        <sql>
+        <sql stripComments="true">
             DELETE FROM tb_user WHERE user_id = 1;
             DELETE FROM tb_user WHERE user_id = 2;
             DELETE FROM tb_user WHERE user_id = 3;

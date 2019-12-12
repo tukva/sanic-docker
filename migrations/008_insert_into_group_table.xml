@@ -4,14 +4,17 @@
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
-  <changeSet context="sso" id="008" author="test" dbms="postgresql">
-    <sql>
+  <changeSet context="sso" id="insert_into_group_table" author="admin" dbms="postgresql">
+    <preConditions onFail="MARK_RAN">
+        <columnExists tableName="tb_group" columnName="name"/>
+    </preConditions>
+    <sql stripComments="true">
         INSERT INTO tb_group (name) VALUES ('admins');
         INSERT INTO tb_group (name) VALUES ('moderators');
         INSERT INTO tb_group (name) VALUES ('viewers');
     </sql>
     <rollback>
-        <sql>
+        <sql stripComments="true">
             DELETE FROM tb_group WHERE name = 'admins';
             DELETE FROM tb_group WHERE name = 'moderators';
             DELETE FROM tb_group WHERE name = 'viewers';

@@ -4,8 +4,13 @@
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
-  <changeSet context="sso" id="006" author="test" dbms="postgresql">
-    <sql>
+  <changeSet context="sso" id="create_group_permission_table" author="admin" dbms="postgresql">
+    <preConditions onFail="MARK_RAN">
+        <not>
+            <tableExists tableName="tb_group_permission"/>
+        </not>
+    </preConditions>
+    <sql stripComments="true">
         CREATE TABLE tb_group_permission (
             group_id int REFERENCES tb_group (group_id) ON DELETE CASCADE,
             permission_id int REFERENCES tb_permission (permission_id) ON DELETE CASCADE,

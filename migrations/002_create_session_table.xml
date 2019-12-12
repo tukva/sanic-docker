@@ -4,8 +4,13 @@
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
-  <changeSet context="sso" id="002" author="test" dbms="postgresql">
-    <sql>
+  <changeSet context="sso" id="create_session_table" author="admin" dbms="postgresql">
+    <preConditions onFail="MARK_RAN">
+        <not>
+            <tableExists tableName="tb_session"/>
+        </not>
+    </preConditions>
+    <sql stripComments="true">
         CREATE TABLE tb_session (
             session_id uuid NOT NULL UNIQUE,
             user_id INTEGER NOT NULL

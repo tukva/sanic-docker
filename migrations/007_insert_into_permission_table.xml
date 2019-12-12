@@ -4,14 +4,17 @@
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd"> 
-  <changeSet context="sso" id="007" author="test" dbms="postgresql">
-    <sql>
+  <changeSet context="sso" id="insert_into_permission_table" author="admin" dbms="postgresql">
+    <preConditions onFail="MARK_RAN">
+        <columnExists tableName="tb_permission" columnName="name"/>
+    </preConditions>
+    <sql stripComments="true">
         INSERT INTO tb_permission (name) VALUES ('approve');
         INSERT INTO tb_permission (name) VALUES ('moderate');
         INSERT INTO tb_permission (name) VALUES ('view');
     </sql>
     <rollback>
-        <sql>
+        <sql stripComments="true">
             DELETE FROM tb_permission WHERE name = 'approve';
             DELETE FROM tb_permission WHERE name = 'moderate';
             DELETE FROM tb_permission WHERE name = 'view';
