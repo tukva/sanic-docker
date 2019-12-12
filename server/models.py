@@ -69,4 +69,4 @@ class SSO:
         return tb_session
 
 
-_SSO = SSO()
+SSOModels = SSO()

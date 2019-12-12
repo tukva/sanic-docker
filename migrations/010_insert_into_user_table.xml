@@ -4,7 +4,7 @@
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
-  <changeSet id="010" author="test">
+  <changeSet context="sso" id="010" author="test" dbms="postgresql">
     <sql>
         INSERT INTO tb_user (username, password) VALUES ('admin', '$2b$12$0ktB9IcVBUKP4ztnGsdmpu1PU2zLh7RLY37vZUe9OAugTNOjzdDvu');
         INSERT INTO tb_user (username, password) VALUES ('moderator', '$2b$12$Zm0jusaqZwPE0xJ5matyRO81TgT7y0hV5P.7eyvHVhNf16XX/SNJq');
