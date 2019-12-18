@@ -6,7 +6,7 @@ from sanic.response import json
 from sanic.log import logger
 from marshmallow.exceptions import ValidationError
 
-from settings import Group
+from constants import Group
 from services.decorators import authorized
 from services.forms import SignupSchema, SigninSchema, PasswordMatchError
 from services.utils import create_and_get_user, create_user_group, get_user, update_and_get_session, do_sign_out
