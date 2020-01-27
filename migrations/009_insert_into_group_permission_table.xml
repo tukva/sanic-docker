@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+  <changeSet context="sso" id="insert_into_group_permission_table" author="admin" dbms="postgresql">
+    <preConditions onFail="MARK_RAN">
+        <columnExists tableName="tb_group_permission" columnName="group_id"/>
+        <columnExists tableName="tb_group_permission" columnName="permission_id"/>
+    </preConditions>
+    <sql stripComments="true">
+        INSERT INTO tb_group_permission VALUES (1, 1);
+        INSERT INTO tb_group_permission VALUES (2, 2);
+        INSERT INTO tb_group_permission VALUES (3, 3);
+    </sql>
+    <rollback>
+        <sql stripComments="true">
+            DELETE FROM tb_group_permission WHERE group_id = 1;
+            DELETE FROM tb_group_permission WHERE group_id = 2;
+            DELETE FROM tb_group_permission WHERE group_id = 3;
+        </sql>
+    </rollback>
+  </changeSet>
+</databaseChangeLog>
