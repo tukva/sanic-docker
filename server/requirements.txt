@@ -9,7 +9,7 @@ attrs==19.1.0
 bcrypt==3.1.7
 git+git://github.com/AndsoiIo/betagr-common@dev#egg=betagr-common
 black==19.3b0
-certifi==2019.11.28
+certifi==2022.12.7
 cffi==1.13.0
 chardet==3.0.4
 Click==7.0
